@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scala Code Parser - Halstead Metrics</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/code-viewer.css">
+  <link rel="stylesheet" href="./css/metrics-table.css">
+</head>
+<body>
+<div class="container">
+  <header class="app-header">
+    <h1>Scala Code Parser</h1>
+    <p>Analyze your Scala code and calculate Halstead metrics</p>
+  </header>
+
+  <main class="main-content">
+    <section class="input-section">
+      <div class="section-header">
+        <h2>Input Scala Code</h2>
+        <div class="actions">
+          <button id="load-example-btn" class="btn secondary">Load Example</button>
+          <label for="file-input" class="btn secondary">Load from File</label>
+          <input type="file" id="file-input" accept=".scala" style="display: none;">
+          <button id="clear-btn" class="btn danger">Clear</button>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <textarea id="code-input" class="code-input" placeholder="Paste your Scala code here or load from file..."></textarea>
+      </div>
+
+      <div class="analyze-actions">
+        <button id="analyze-btn" class="btn primary">Analyze Code</button>
+      </div>
+    </section>
+
+    <section class="results-section">
+      <div class="section-header">
+        <h2>Analysis Results</h2>
+      </div>
+
+      <div class="metrics-container">
+        <div class="metrics-card">
+          <h3>Basic Halstead Metrics</h3>
+          <table class="metrics-table" id="basic-metrics">
+            <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Program Vocabulary (n)</td>
+              <td class="metric-value" id="n-value">-</td>
+            </tr>
+            <tr>
+              <td>Program Length (N)</td>
+              <td class="metric-value" id="N_-value">-</td>
+            </tr>
+            <tr>
+              <td>Volume (V)</td>
+              <td class="metric-value" id="V-value">-</td>
+            </tr>
+            <tr>
+              <td>Difficulty (D)</td>
+              <td class="metric-value" id="D-value">-</td>
+            </tr>
+            <tr>
+              <td>Effort (E)</td>
+              <td class="metric-value" id="E-value">-</td>
+            </tr>
+            <tr>
+              <td>Time to Implement (T)</td>
+              <td class="metric-value" id="T-value">-</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="metrics-card">
+          <h3>Extended Halstead Metrics</h3>
+          <table class="metrics-table" id="extended-metrics">
+            <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Program Level (L)</td>
+              <td class="metric-value" id="L-value">-</td>
+            </tr>
+            <tr>
+              <td>Intelligence Content (I)</td>
+              <td class="metric-value" id="I-value">-</td>
+            </tr>
+            <tr>
+              <td>Number of Delivered Bugs (B)</td>
+              <td class="metric-value" id="B-value">-</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="token-details">
+        <h3>Token Details</h3>
+        <div class="token-tables">
+          <div class="token-table-container">
+            <h4>Operators</h4>
+            <table class="token-table" id="operators-table">
+              <thead>
+              <tr>
+                <th>Operator</th>
+                <th>Count</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="token-table-container">
+            <h4>Operands</h4>
+            <table class="token-table" id="operands-table">
+              <thead>
+              <tr>
+                <th>Operand</th>
+                <th>Count</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Scala Code Parser with Halstead Metrics Analysis</p>
+  </footer>
+</div>
+
+<script src="./js/tokenizer.js"></script>
+<script src="./js/metrics-calculator.js"></script>
+<script src="./js/file-handler.js"></script>
+<script src="./js/ui-controller.js"></script>
+</body>
+</html>

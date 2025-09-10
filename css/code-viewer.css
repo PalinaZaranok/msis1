@@ -1,0 +1,70 @@
+.code-input {
+  width: 100%;
+  min-height: 300px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  resize: vertical;
+  box-sizing: border-box;
+  line-height: 1.5;
+  tab-size: 4;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+}
+
+.code-container {
+  position: relative;
+}
+
+.code-input.line-numbers {
+  padding-left: 3.5rem;
+  background-attachment: local;
+  background-image: linear-gradient(90deg, #f0f0f0 3rem, transparent 3rem);
+  background-size: 100% 1.5em;
+  line-height: 1.5em;
+}
+
+.keyword {
+  color: #0077aa;
+  font-weight: bold;
+}
+
+.comment {
+  color: #999;
+}
+
+.string {
+  color: #669900;
+}
+
+.number {
+  color: #990055;
+}
+
+.operator {
+  color: #9a6e3a;
+}
+
+.bracket {
+  color: #999;
+}
+
+.code-input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.code-input::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.code-input::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.code-input::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
