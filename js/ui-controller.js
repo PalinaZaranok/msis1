@@ -1,3 +1,4 @@
+import {extractHalsteadTokens} from './temp.js'
 class UIController {
   constructor() {
     this.tokenizer         = new ScalaTokenizer();
@@ -30,7 +31,7 @@ class UIController {
     }
 
     try {
-      const { operators, operands } = this.tokenizer.tokenize(code);
+      const { operators, operands } = extractHalsteadTokens(code);
 
       const metrics = this.metricsCalculator.calculate(operators, operands);
 
