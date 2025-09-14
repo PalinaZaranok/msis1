@@ -1,4 +1,5 @@
 class HalsteadMetricsCalculator {
+  constructor() {}
   calculate(operators, operands) {
     const distinctOperators = this.countDistinct(operators);
     const distinctOperands = this.countDistinct(operands);

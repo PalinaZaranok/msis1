@@ -1,7 +1,5 @@
-import {extractHalsteadTokens} from './temp.js'
 class UIController {
   constructor() {
-    this.tokenizer         = new ScalaTokenizer();
     this.metricsCalculator = new HalsteadMetricsCalculator();
     this.fileHandler       = new FileHandler();
 
@@ -22,7 +20,7 @@ class UIController {
     });
   }
 
-  analyzeCode() {
+  async analyzeCode() {
     const code = document.getElementById('code-input').value.trim();
 
     if (!code) {
@@ -31,7 +29,16 @@ class UIController {
     }
 
     try {
-      const { operators, operands } = extractHalsteadTokens(code);
+      const response = await fetch('http://localhost:3000/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code: code })
+      });
+      let json = await response.json()
+      const operands = json.operands
+      const operators = json.operators
 
       const metrics = this.metricsCalculator.calculate(operators, operands);
 
