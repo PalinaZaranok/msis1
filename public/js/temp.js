@@ -53,8 +53,32 @@ export function extractHalsteadTokens(node) {
                 handleIfExpression(node);
                 break;
 
+            case 'throw_expression':
+                handleThrowExpression(node);
+                break;
+
+            case 'function_expression':
+                handleAnonymousFunction(node);
+                break;
+
+            case 'lambda_expression':
+                handleAnonymousFunction(node);
+                break;
+
+            case 'while_expression':
+                handleWhileExpression(node);
+                break;
+
+            case 'case_clause':
+                handleCaseClause(node);
+                break;
+
+            case 'try_expression':
+                handleTryExpression(node);
+                break;
+
             case 'call_expression':
-                operators.push('()');
+                handleCallExpression(node);
                 break;
 
             case 'operator_identifier':
@@ -65,10 +89,19 @@ export function extractHalsteadTokens(node) {
                 break;
 
             case '<-':
+                operators.push(node.text);
+                break;
+
+            case '.':
+                operators.push(node.text);
+                break;
+
+            case '!':
+                operators.push(node.text);
+                break;
+
             case 'identifier':
-                if (!functionDefinitions.has(node.text)) {
-                    operands.push(node.text);
-                }
+                operands.push(node.text);
                 break;
 
 
@@ -88,7 +121,13 @@ export function extractHalsteadTokens(node) {
             case 'for_expression':
                 handleForExpression(node);
                 break;
+            case 'extends':
+                operators.push('extends');
+                break;
 
+            case 'override':
+                operators.push('override');
+                break;
             case 'interpolated_string_expression':
                 operands.push(node.text);
                 break;
@@ -96,6 +135,17 @@ export function extractHalsteadTokens(node) {
                 handleGuard(node);
                 break;
 
+            case 'class_definition':
+                handleClassDefinition(node);
+                break;
+
+            case 'trait_definition':
+                handleTraitDefinition(node);
+                break;
+
+            case 'case_class_definition':
+                handleCaseClassDefinition(node);
+                break;
         }
 
         for (let i = 0; i < node.childCount; i++) {
@@ -103,8 +153,34 @@ export function extractHalsteadTokens(node) {
         }
     }
 
+    function handleCallExpression(node) {
+        operators.push('()');
+
+        const funcName = node.children.find(child => child.type === 'identifier');
+        if (funcName) {
+            operands.push(funcName.text);
+            processedNodes.add(funcName);
+        }
+
+        const argumentsNode = node.children.find(child => child.type === 'arguments');
+        if (argumentsNode) {
+            processedNodes.add(argumentsNode);
+
+            argumentsNode.children.forEach(child => {
+                if (child.type === 'identifier' || child.type === 'integer_literal' || child.type === 'string_literal' || child.type === 'lambda_expression') {
+                    traverse(child);
+                }
+            });
+        }
+    }
+
     function handleFunctionDefinition(node) {
         operators.push('def');
+
+        const hasOverride = node.children.some(child => child.type === 'override');
+        if (hasOverride) {
+            operators.push('override');
+        }
 
         const funcName = node.children.find(child =>
             child.type === 'identifier' &&
@@ -113,7 +189,7 @@ export function extractHalsteadTokens(node) {
         );
 
         if (funcName) {
-            operators.push(funcName.text);
+            operands.push(funcName.text);
             functionDefinitions.add(funcName.text);
             processedNodes.add(funcName);
         }
@@ -139,6 +215,15 @@ export function extractHalsteadTokens(node) {
             operators.push(':');
             operands.push(returnType.text);
             processedNodes.add(returnType);
+        }
+
+        const body = node.children.find(child =>
+            child.type === 'block' ||
+            child.type === 'expression' ||
+            child.type === 'prefix_expression'
+        );
+        if (body) {
+            traverse(body);
         }
     }
 
@@ -260,6 +345,20 @@ export function extractHalsteadTokens(node) {
         }
     }
 
+    function handleThrowExpression(node) {
+        operators.push('throw');
+
+        processedNodes.add(node);
+
+        for (let i = 0; i < node.childCount; i++) {
+            const child = node.children[i];
+            if (child.type !== 'throw') {
+                traverse(child);
+            }
+        }
+    }
+
+
     function handleCaseClause(node) {
         operators.push('=>');
 
@@ -340,27 +439,184 @@ export function extractHalsteadTokens(node) {
         }
     }
 
-    function handleGenerator(node) {
-        operators.push('<-');
+    function handleClassDefinition(node) {
+        operators.push('class');
+
+        const hasExtends = node.children.some(child => child.type === 'extends');
+        if (hasExtends) {
+            operators.push('extends');
+        }
+
+        const className = node.children.find(child =>
+            child.type === 'identifier' &&
+            child.previousSibling &&
+            child.previousSibling.type === 'class'
+        );
+
+        if (className) {
+            operands.push(className.text);
+            processedNodes.add(className);
+        }
+
+        const parameters = node.children.find(child => child.type === 'class_parameters');
+        if (parameters) {
+            operators.push('()');
+            processedNodes.add(parameters);
+
+            parameters.children.forEach(child => {
+                if (child.type === 'parameter') {
+                    handleParameter(child);
+                }
+            });
+        }
+
+        const templateBody = node.children.find(child => child.type === 'template_body');
+        if (templateBody) {
+            traverse(templateBody);
+        }
+    }
+
+    function handleTraitDefinition(node) {
+        operators.push('trait');
+
+        const traitName = node.children.find(child =>
+            child.type === 'identifier' &&
+            child.previousSibling &&
+            child.previousSibling.type === 'trait'
+        );
+
+        if (traitName) {
+            operands.push(traitName.text);
+            processedNodes.add(traitName);
+        }
+
+        const templateBody = node.children.find(child => child.type === 'template_body');
+        if (templateBody) {
+            traverse(templateBody);
+        }
+    }
+
+    function handleCaseClassDefinition(node) {
+        operators.push('case');
+        handleClassDefinition(node);
+    }
+
+    function handleWhileExpression(node) {
+        operators.push('while');
+
+        processedNodes.add(node);
+
+        const condition = node.children.find(child => child.type === 'parenthesized_expression');
+        if (condition) {
+            operators.push('()');
+            traverse(condition);
+        }
+
+        const body = node.children.find(child =>
+            child.type === 'block' ||
+            child.type === 'expression'
+        );
+        if (body) {
+            traverse(body);
+        }
+    }
+
+    function handleTryExpression(node) {
+        operators.push('try');
+
+        processedNodes.add(node);
+
+        const tryBlock = node.children.find(child => child.type === 'block');
+        if (tryBlock) {
+            traverse(tryBlock);
+        }
+
+        const catchClauses = node.children.find(child => child.type === 'catch_clause');
+        if (catchClauses) {
+            handleCatchClause(catchClauses);
+        }
+
+        const finallyClause = node.children.find(child => child.type === 'finally_clause');
+        if (finallyClause) {
+            handleFinallyClause(finallyClause);
+        }
+    }
+
+    function handleCatchClause(node) {
+        operators.push('catch');
 
         processedNodes.add(node);
 
         const pattern = node.children.find(child =>
-            child.type === 'identifier' ||
-            child.type === 'pattern'
+            child.type === 'case_block' ||
+            child.type === 'identifier'
         );
+
         if (pattern) {
-            operands.push(pattern.text);
-            processedNodes.add(pattern);
+            if (pattern.type === 'case_block') {
+                const size = pattern.children.length;
+                for(let i = 0; i < size; i++) {
+                    const child = pattern.children[i];
+                    traverse(child);
+                }
+            } else {
+                operands.push(pattern.text);
+                processedNodes.add(pattern);
+
+                const typeAnnotation = pattern.nextSibling;
+                if (typeAnnotation && typeAnnotation.type === ':') {
+                    operators.push(':');
+                    processedNodes.add(typeAnnotation);
+
+                    const exceptionType = typeAnnotation.nextSibling;
+                    if (exceptionType && exceptionType.type === 'type_identifier') {
+                        operands.push(exceptionType.text);
+                        processedNodes.add(exceptionType);
+                    }
+                }
+            }
         }
 
-        const expression = node.children.find(child =>
-            child.type === 'identifier' ||
-            child.type === 'call_expression' ||
-            child.type === 'parenthesized_expression'
+        const catchBlock = node.children.find(child => child.type === 'block');
+        if (catchBlock) {
+            traverse(catchBlock);
+        }
+    }
+
+    function handleAnonymousFunction(node) {
+        operators.push('=>');
+
+        processedNodes.add(node);
+
+        const parameters = node.children.find(child => child.type === 'parameters');
+        if (parameters) {
+            operators.push('()');
+            processedNodes.add(parameters);
+
+            parameters.children.forEach(child => {
+                if (child.type === 'parameter') {
+                    handleParameter(child);
+                }
+            });
+        }
+
+        const body = node.children.find(child =>
+            child.type === 'block' ||
+            child.type === 'expression'
         );
-        if (expression) {
-            traverse(expression);
+        if (body) {
+            traverse(body);
+        }
+    }
+
+    function handleFinallyClause(node) {
+        operators.push('finally');
+
+        processedNodes.add(node);
+
+        const finallyBlock = node.children.find(child => child.type === 'block');
+        if (finallyBlock) {
+            traverse(finallyBlock);
         }
     }
 
