@@ -53,16 +53,14 @@ class UIController {
   }
 
   displayMetrics(metrics) {
-    document.getElementById('n-value').textContent = metrics.n.toFixed(2);
-    document.getElementById('N_-value').textContent = metrics.N.toFixed(2);
-    document.getElementById('V-value').textContent = metrics.V.toFixed(2);
-    document.getElementById('D-value').textContent = metrics.D.toFixed(2);
-    document.getElementById('E-value').textContent = metrics.E.toFixed(2);
-    document.getElementById('T-value').textContent = metrics.T.toFixed(2);
+    document.getElementById('n1-value').textContent = metrics.distinctOperators.size.toFixed(2);
+    document.getElementById('n2-value').textContent = metrics.distinctOperands.size.toFixed(2);
+    document.getElementById('N_1-value').textContent = metrics.totalOperators;
+    document.getElementById('N_2-value').textContent = metrics.totalOperands;
 
-    document.getElementById('L-value').textContent = metrics.L.toFixed(4);
-    document.getElementById('I-value').textContent = metrics.I.toFixed(2);
-    document.getElementById('B-value').textContent = metrics.B.toFixed(4);
+    document.getElementById('n-value').textContent = metrics.n.toFixed(4);
+    document.getElementById('L-value').textContent = metrics.N.toFixed(2);
+    document.getElementById('V-value').textContent = metrics.V.toFixed(4);
   }
 
   displayTokenDetails(operatorCounts, operandCounts) {

@@ -12,7 +12,7 @@ class HalsteadMetricsCalculator {
     const N = totalOperators + totalOperands;
 
     const V = N * Math.log2(n);
-
+    /**
     const D = (distinctOperators.size / 2) * (totalOperands / distinctOperands.size);
 
     const E = D * V;
@@ -24,11 +24,12 @@ class HalsteadMetricsCalculator {
     const I = V / D;
 
     const B = Math.pow(E, 2/3) / 3000;
-
+    **/
     return {
       n: n,
       N: N,
       V: V,
+      /**
       D: D,
       E: E,
       T: T,
@@ -36,7 +37,7 @@ class HalsteadMetricsCalculator {
       L: L,
       I: I,
       B: B,
-
+      **/
       distinctOperators: distinctOperators,
       distinctOperands: distinctOperands,
       totalOperators: totalOperators,
