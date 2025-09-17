@@ -41,6 +41,10 @@ export function extractHalsteadTokens(node) {
         processedNodes.add(node);
         console.log(node.type);
         switch (node.type) {
+            case '{':
+                operators.push('{}')
+                break;
+
             case 'object_definition':
                 operators.push('object');
                 break;
