@@ -41,6 +41,9 @@ export function extractHalsteadTokens(node) {
         processedNodes.add(node);
         console.log(node.type);
         switch (node.type) {
+            case 'object_definition':
+                operators.push('object');
+                break;
             case 'function_definition':
                 handleFunctionDefinition(node);
                 break;
@@ -158,7 +161,7 @@ export function extractHalsteadTokens(node) {
 
         const funcName = node.children.find(child => child.type === 'identifier');
         if (funcName) {
-            operands.push(funcName.text);
+            operators.push(funcName.text);
             processedNodes.add(funcName);
         }
 
@@ -167,7 +170,12 @@ export function extractHalsteadTokens(node) {
             processedNodes.add(argumentsNode);
 
             argumentsNode.children.forEach(child => {
-                if (child.type === 'identifier' || child.type === 'integer_literal' || child.type === 'string_literal' || child.type === 'lambda_expression') {
+                if (child.type === 'identifier' ||
+                    child.type === 'integer_literal' ||
+                    child.type === 'string_literal' ||
+                    child.type === 'lambda_expression' ||
+                    child.type === 'boolean_literal' ||
+                    child.type === 'interpolated_string_expression') {
                     traverse(child);
                 }
             });
@@ -176,7 +184,6 @@ export function extractHalsteadTokens(node) {
 
     function handleFunctionDefinition(node) {
         operators.push('def');
-
         const hasOverride = node.children.some(child => child.type === 'override');
         if (hasOverride) {
             operators.push('override');
@@ -196,7 +203,6 @@ export function extractHalsteadTokens(node) {
 
         const parameters = node.children.find(child => child.type === 'parameters');
         if (parameters) {
-            operators.push('()');
             processedNodes.add(parameters);
 
             parameters.children.forEach(child => {
@@ -315,7 +321,7 @@ export function extractHalsteadTokens(node) {
             child.type === 'type_identifier' || child.type === 'generic_type'
         );
         if (type) {
-            operands.push(type.text);
+            operators.push(type.text);
             processedNodes.add(type);
         }
     }
