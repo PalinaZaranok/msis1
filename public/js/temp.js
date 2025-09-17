@@ -179,7 +179,8 @@ export function extractHalsteadTokens(node) {
                     child.type === 'string_literal' ||
                     child.type === 'lambda_expression' ||
                     child.type === 'boolean_literal' ||
-                    child.type === 'interpolated_string_expression') {
+                    child.type === 'interpolated_string_expression' ||
+                    child.type === 'infix_expression') {
                     traverse(child);
                 }
             });
@@ -223,7 +224,7 @@ export function extractHalsteadTokens(node) {
         );
         if (returnType) {
             operators.push(':');
-            operands.push(returnType.text);
+            operators.push(returnType.text);
             processedNodes.add(returnType);
         }
 
