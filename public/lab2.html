@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализатор метрик Джилба для Scala</title>
+    <link rel="stylesheet" href="/css/lab2.css">
+</head>
+<body>
+<div class="container">
+    <h1>Анализатор метрик Джилба для Scala</h1>
+
+    <div class="input-section">
+        <textarea id="scala-code" placeholder="Введите ваш Scala код здесь..."></textarea>
+        <button id="analyze-btn">Анализатор кода</button>
+    </div>
+
+    <div class="results-section">
+        <h2>Результаты анализа</h2>
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <label>Абсолютная сложность (CL):</label>
+                <span id="cl-result">-</span>
+            </div>
+            <div class="metric-item">
+                <label>Относительная сложность (cl):</label>
+                <span id="cl-relative-result">-</span>
+            </div>
+            <div class="metric-item">
+                <label>Максимальная вложенность (cli):</label>
+                <span id="cli-result">-</span>
+            </div>
+            <div class="metric-item">
+                <label>Всего операторов:</label>
+                <span id="total-statements">-</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/scala-parser.js"></script>
+<script src="/js/lab2-server.js"></script>
+</body>
+</html>

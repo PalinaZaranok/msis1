@@ -41,6 +41,18 @@ export function extractHalsteadTokens(node) {
         processedNodes.add(node);
         console.log(node.type);
         switch (node.type) {
+            case 'parenthesized_expression':
+                operators.push('()');
+
+                processedNodes.add(node);
+
+                for (let i = 0; i < node.childCount; i++) {
+                    const child = node.children[i];
+                    if (child.type !== '(' && child.type !== ')') {
+                        traverse(child);
+                    }
+                }
+                break;
             case '{':
                 operators.push('{}')
                 break;
@@ -308,6 +320,7 @@ export function extractHalsteadTokens(node) {
             }
         }
     }
+
 
     function handleParameter(node) {
         const paramName = node.children.find(child => child.type === 'identifier');

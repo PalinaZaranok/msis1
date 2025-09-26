@@ -1,5 +1,6 @@
 {
   "name": "scala-code-parser",
+  "type": "module",
   "version": "1.0.0",
   "description": "Scala Code Parser with Halstead Metrics Analysis",
   "main": "server.js",
